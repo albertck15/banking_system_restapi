@@ -1,21 +1,18 @@
 package hu.csercsak_albert.banking_system.service;
 
-import hu.csercsak_albert.banking_system.repository.UserRepository;
-import hu.csercsak_albert.banking_system.security.password.PasswordEncoder;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import hu.csercsak_albert.banking_system.dto.UserDto;
+import org.springframework.http.HttpStatus;
 
-@Service
-public class UserService {
+public interface UserService {
 
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
+    UserDto createUser(UserDto userDto);
 
-    @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
+    HttpStatus deleteUser(Long id);
 
-    //TODO implement methods
+    UserDto findByAccountNumber(int accountNumber);
+
+    UserDto findById(Long id);
+
+    boolean isExistByAccountNumber(int accountNumber);
+
 }
