@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 
 public interface UserService {
 
-    UserDto createUser(UserDto userDto);
+    UserDto createUser(UserDto userDto, Double initialAmount);
 
     HttpStatus deleteUser(Long id);
 
@@ -14,5 +14,9 @@ public interface UserService {
     UserDto findById(Long id);
 
     boolean isExistByAccountNumber(int accountNumber);
+
+    HttpStatus deposit(Long id, double amount);
+
+    HttpStatus withdraw(Long id, double amount);
 
 }
