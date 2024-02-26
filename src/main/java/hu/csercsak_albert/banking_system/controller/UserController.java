@@ -33,13 +33,11 @@ public class UserController {
     public ResponseEntity<UserDto> addUser(@Valid @RequestBody UserDto userDto,
                                            @RequestParam(value = "initialAmount", required = false) Double initialAmount
     ) {
-        //TODO handle missing request payload
-        userDto.setCreatedAtDate(LocalDateTime.now());
-        userDto.setUpdatedAtDate(LocalDateTime.now());
-        userDto.setLastLoginDate(LocalDateTime.now());
+        userDto.setCreatedAt(LocalDateTime.now());
+        userDto.setUpdatedAt(LocalDateTime.now());
+        userDto.setLastLogin(LocalDateTime.now());
         return new ResponseEntity<>(userService.createUser(userDto, initialAmount), HttpStatus.CREATED);
     }
-
 
     @GetMapping("/{id}")
     public ResponseEntity<UserDto> getAccountById(@PathVariable Long id) {

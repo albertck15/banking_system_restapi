@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Entity
 @Builder
-@Table(name = "user")
+@Table(name = "users")
 public class User {
 
     @Id
@@ -40,13 +40,13 @@ public class User {
     private LocalDate dateOfBirth;
 
     @Column(nullable = false)
-    private LocalDateTime createdAtDate;
+    private LocalDateTime createdAt;
 
     @Column(nullable = false)
-    private LocalDateTime updatedAtDate;
+    private LocalDateTime updatedAt;
 
     @Column(nullable = false)
-    private LocalDateTime lastLoginDate;
+    private LocalDateTime lastLogin;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private Balance balance;

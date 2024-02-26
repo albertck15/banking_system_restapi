@@ -16,9 +16,9 @@ public class UserMapper {
                 .firstName(userDto.getFirstName())
                 .lastName(userDto.getLastName())
                 .dateOfBirth(userDto.getDateOfBirth())
-                .createdAtDate(userDto.getCreatedAtDate())
-                .updatedAtDate(userDto.getUpdatedAtDate())
-                .lastLoginDate(userDto.getLastLoginDate())
+                .createdAt(userDto.getCreatedAt())
+                .updatedAt(userDto.getUpdatedAt())
+                .lastLogin(userDto.getLastLogin())
                 .build();
 
         // Setting up Bi-directional relationship between balance and user objects
@@ -39,9 +39,9 @@ public class UserMapper {
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
                 .dateOfBirth(user.getDateOfBirth())
-                .createdAtDate(user.getCreatedAtDate())
-                .updatedAtDate(user.getUpdatedAtDate())
-                .lastLoginDate(user.getLastLoginDate())
+                .createdAt(user.getCreatedAt())
+                .updatedAt(user.getUpdatedAt())
+                .lastLogin(user.getLastLogin())
                 .balanceDto(BalanceMapper.mapToBalanceDto(user.getBalance()))
                 .build();
     }

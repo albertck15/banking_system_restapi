@@ -1,10 +1,7 @@
 package hu.csercsak_albert.banking_system.exceptions.handler;
 
 import hu.csercsak_albert.banking_system.dto.CustomErrorResponse;
-import hu.csercsak_albert.banking_system.exceptions.BalanceNotFoundException;
-import hu.csercsak_albert.banking_system.exceptions.InvalidAmountException;
-import hu.csercsak_albert.banking_system.exceptions.InvalidInputException;
-import hu.csercsak_albert.banking_system.exceptions.UserNotFoundException;
+import hu.csercsak_albert.banking_system.exceptions.*;
 import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +9,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.LocalDateTime;
 
 @ControllerAdvice
@@ -45,10 +43,32 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<String> handleValidationExceptions(MethodArgumentNotValidException e) {
+    public ResponseEntity<CustomErrorResponse> handleValidationExceptions(MethodArgumentNotValidException e) {
         String errorMessage = e.getBindingResult().getFieldErrors().stream()
                 .map(error -> error.getField() + ": " + error.getDefaultMessage())
                 .reduce("", (accumulator, item) -> accumulator + "\n" + item);
-        return ResponseEntity.badRequest().body(errorMessage);
+        CustomErrorResponse errorResponse = CustomErrorResponse.builder()
+                .message(errorMessage)
+                .timestamp(LocalDateTime.now())
+                .build();
+        return ResponseEntity.badRequest().body(errorResponse);
+    }
+
+    @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
+    public ResponseEntity<CustomErrorResponse> handleSQLIntegrityConstraintViolationException(SQLIntegrityConstraintViolationException e) {
+        CustomErrorResponse errorResponse = CustomErrorResponse.builder()
+                .message("Email or username already taken")
+                .timestamp(LocalDateTime.now())
+                .build();
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
+    }
+
+    @ExceptionHandler(TransactionNotFoundException.class)
+    public ResponseEntity<CustomErrorResponse> handleTransactionNotFoundException(TransactionNotFoundException e) {
+        CustomErrorResponse errorResponse = CustomErrorResponse.builder()
+                .message(e.getMessage())
+                .timestamp(LocalDateTime.now())
+                .build();
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
 }

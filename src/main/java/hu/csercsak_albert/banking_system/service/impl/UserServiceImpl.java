@@ -106,34 +106,6 @@ public class UserServiceImpl implements UserService {
         return userOptional.isPresent();
     }
 
-    @Transactional
-    @Override
-    public HttpStatus deposit(Long id, double amount) {
-        if (amount <= 0) {
-            throw new InvalidAmountException("Deposit amount must be positive");
-        }
-        Optional<Balance> balanceOptional = balanceRepository.findByUserId(id);
-        Balance balance = balanceOptional.orElseThrow(() -> new BalanceNotFoundException("Balance not found with this User ID (%d)".formatted(id)));
-        double balanceAmount = balance.getBalance();
-        balanceAmount += amount;
-        balance.setBalance(balanceAmount);
-        balanceRepository.save(balance);
-        return HttpStatus.OK;
-    }
-
-    @Override
-    public HttpStatus withdraw(Long id, double amount) {
-        Optional<Balance> balanceOptional = balanceRepository.findByUserId(id);
-        Balance balance = balanceOptional.orElseThrow(() -> new BalanceNotFoundException("Balance not found with this user ID(%d)".formatted(id)));
-        double balanceAmount = balance.getBalance();
-        if (amount > balanceAmount) {
-            throw new InvalidAmountException("Withdraw amount can't be more than the balance");
-        }
-        balance.setBalance(balanceAmount - amount);
-        balanceRepository.save(balance);
-        return HttpStatus.OK;
-    }
-
     //************************************
     // Helper methods
     //

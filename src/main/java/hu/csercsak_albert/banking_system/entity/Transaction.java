@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Builder
 @Entity
 @Table(name = "transactions")
-public class Transaction {
+public class Transaction implements Comparable<Transaction> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,12 +23,17 @@ public class Transaction {
 
     private TransactionType transactionType; // DEPOSIT, WITHDRAWAL, TRANSFER
 
-    private int fromAccountId;
+    private int fromAccountNumber;
 
-    private int toAccountId;
+    private int toAccountNumber;
 
     private double amount;
 
     @Column(nullable = false)
     private LocalDateTime time;
+
+    @Override
+    public int compareTo(Transaction other) {
+        return this.time.compareTo(other.time);
+    }
 }

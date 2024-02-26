@@ -31,7 +31,7 @@ public class UserDto {
 
     @NotBlank(message = "Email is required")
     @NotNull(message = "Email is required")
-    @Email(message = "Email should be valid")
+    @Email(message = "Invalid Email")
     private String email;
 
     @NotBlank(message = "First name is required")
@@ -46,11 +46,11 @@ public class UserDto {
     @NotNull(message = "Date of birth is required")
     private LocalDate dateOfBirth;
 
-    private LocalDateTime createdAtDate;
+    private LocalDateTime createdAt;
 
-    private LocalDateTime updatedAtDate;
+    private LocalDateTime updatedAt;
 
-    private LocalDateTime lastLoginDate;
+    private LocalDateTime lastLogin;
 
     private BalanceDto balanceDto;
 }

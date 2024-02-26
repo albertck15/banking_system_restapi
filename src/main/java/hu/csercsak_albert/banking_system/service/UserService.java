@@ -14,9 +14,4 @@ public interface UserService {
     UserDto findById(Long id);
 
     boolean isExistByAccountNumber(int accountNumber);
-
-    HttpStatus deposit(Long id, double amount);
-
-    HttpStatus withdraw(Long id, double amount);
-
 }
