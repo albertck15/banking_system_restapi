@@ -7,6 +7,8 @@ public interface UserService {
 
     UserDto createUser(UserDto userDto, Double initialAmount);
 
+    UserDto updateUser(Long id, UserDto userDto);
+
     HttpStatus deleteUser(Long id);
 
     UserDto findByAccountNumber(int accountNumber);

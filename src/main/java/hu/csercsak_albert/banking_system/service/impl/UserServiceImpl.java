@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.Random;
 
@@ -63,15 +64,30 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
+    public UserDto updateUser(Long id, UserDto userDto) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("User not found with this ID(%d)".formatted(id)));
+        user.setFirstName(userDto.getFirstName());
+        user.setLastName(userDto.getLastName());
+        user.setEmail(userDto.getEmail());
+        user.setPassword(userDto.getPassword());
+        user.setUsername(userDto.getUsername());
+        user.setUpdatedAt(LocalDateTime.now());
+        user = userRepository.save(user);
+        return UserMapper.mapToUserDto(user);
+    }
+
+    @Transactional
+    @Override
     public HttpStatus deleteUser(Long id) {
         Optional<User> userOptional = userRepository.findById(id);
         Optional<Balance> balanceOptional = balanceRepository.findByUserId(id);
         if (userOptional.isPresent() && balanceOptional.isPresent()) {
             userRepository.delete(userOptional.get());
             balanceRepository.delete(balanceOptional.get());
-            return HttpStatus.NO_CONTENT;
+            return HttpStatus.OK;
         }
-        return HttpStatus.NOT_FOUND;
+        throw new UserNotFoundException("User not found with that ID(%d)".formatted(id));
     }
 
     @Override

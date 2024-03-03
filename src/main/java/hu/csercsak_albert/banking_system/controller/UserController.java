@@ -2,6 +2,7 @@ package hu.csercsak_albert.banking_system.controller;
 
 import hu.csercsak_albert.banking_system.dto.CustomErrorResponse;
 import hu.csercsak_albert.banking_system.dto.UserDto;
+import hu.csercsak_albert.banking_system.entity.User;
 import hu.csercsak_albert.banking_system.exceptions.InvalidInputException;
 import hu.csercsak_albert.banking_system.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,12 @@ public class UserController {
     }
 
 
+    @GetMapping("/{id}")
+    public ResponseEntity<UserDto> getAccountById(@PathVariable Long id) {
+        UserDto userDto = userService.findById(id);
+        return ResponseEntity.status(HttpStatus.OK).body(userDto);
+    }
+
     @PostMapping
     public ResponseEntity<UserDto> addUser(@Valid @RequestBody UserDto userDto,
                                            @RequestParam(value = "initialAmount", required = false) Double initialAmount
@@ -36,12 +43,18 @@ public class UserController {
         userDto.setCreatedAt(LocalDateTime.now());
         userDto.setUpdatedAt(LocalDateTime.now());
         userDto.setLastLogin(LocalDateTime.now());
-        return new ResponseEntity<>(userService.createUser(userDto, initialAmount), HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(userDto, initialAmount));
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<UserDto> getAccountById(@PathVariable Long id) {
-        UserDto userDto = userService.findById(id);
-        return new ResponseEntity<>(userDto, HttpStatus.OK);
+    @PutMapping("/{id}")
+    public ResponseEntity<UserDto> updateUser(@Valid @RequestBody UserDto userDto, @PathVariable Long id) {
+        UserDto updatedUserDto = userService.updateUser(id, userDto);
+        return ResponseEntity.status(HttpStatus.OK).body(updatedUserDto);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteAccountById(@PathVariable Long id) {
+        HttpStatus responseStatus = userService.deleteUser(id);
+        return ResponseEntity.status(responseStatus).body("User successfully deleted.");
     }
 }

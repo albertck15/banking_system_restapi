@@ -1,8 +1,8 @@
 package hu.csercsak_albert.banking_system.repository;
 
+import hu.csercsak_albert.banking_system.dto.UserDto;
 import hu.csercsak_albert.banking_system.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 

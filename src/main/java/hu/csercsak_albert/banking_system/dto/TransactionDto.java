@@ -1,6 +1,7 @@
 package hu.csercsak_albert.banking_system.dto;
 
 import hu.csercsak_albert.banking_system.enums.TransactionType;
+import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,6 +18,7 @@ import java.time.LocalDateTime;
 @Builder
 public class TransactionDto {
 
+    @Id
     private Long id;
 
     private TransactionType transactionType;

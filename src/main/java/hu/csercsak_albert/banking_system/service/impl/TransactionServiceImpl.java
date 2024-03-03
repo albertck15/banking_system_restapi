@@ -1,6 +1,7 @@
 package hu.csercsak_albert.banking_system.service.impl;
 
 import hu.csercsak_albert.banking_system.dto.TransactionDto;
+import hu.csercsak_albert.banking_system.dto.UserDto;
 import hu.csercsak_albert.banking_system.entity.Balance;
 import hu.csercsak_albert.banking_system.entity.Transaction;
 import hu.csercsak_albert.banking_system.entity.User;
@@ -13,12 +14,14 @@ import hu.csercsak_albert.banking_system.repository.TransactionRepository;
 import hu.csercsak_albert.banking_system.repository.UserRepository;
 import hu.csercsak_albert.banking_system.service.TransactionService;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+@Service
 public class TransactionServiceImpl implements TransactionService {
 
     private final UserRepository userRepository;
@@ -49,9 +52,9 @@ public class TransactionServiceImpl implements TransactionService {
         balanceAmount += transactionDto.getAmount();
         balance.setBalance(balanceAmount);
         balanceRepository.save(balance);
-
-        // TODO
-        return null;
+        Transaction transaction = TransactionMapper.mapToTransaction(transactionDto);
+        transaction = transactionRepository.save(transaction);
+        return TransactionMapper.mapToTransactionDto(transaction);
     }
 
     @Transactional
@@ -67,9 +70,8 @@ public class TransactionServiceImpl implements TransactionService {
         }
         balance.setBalance(balanceAmount - transactionDto.getAmount());
         balanceRepository.save(balance);
-
-        // TODO
-        return null;
+        Transaction transaction = TransactionMapper.mapToTransaction(transactionDto);
+        return TransactionMapper.mapToTransactionDto(transactionRepository.save(transaction));
     }
 
     @Transactional
@@ -89,11 +91,9 @@ public class TransactionServiceImpl implements TransactionService {
         fromBalance.setBalance(fromBalanceValue);
         toBalance.setBalance(toBalanceValue);
         Transaction transaction = TransactionMapper.mapToTransaction(transactionDto);
-        transactionRepository.save(transaction);
+        transaction = transactionRepository.save(transaction);
         balanceRepository.saveAll(List.of(fromBalance, toBalance));
-
-        // TODO
-        return null;
+        return TransactionMapper.mapToTransactionDto(transaction);
     }
 
     //*************************************************
@@ -101,9 +101,9 @@ public class TransactionServiceImpl implements TransactionService {
     //
 
     @Override
-    public List<TransactionDto> getTransactionsById(Long id) {
-        List<Transaction> listByFromId = transactionRepository.findByFromAccountId(id); //
-        List<Transaction> listByToId = transactionRepository.findByToAccountId(id);
+    public List<TransactionDto> getTransactionsByAccountNumber(Long accountNumber) {
+        List<Transaction> listByFromId = transactionRepository.findByFromAccountNumber(accountNumber); //
+        List<Transaction> listByToId = transactionRepository.findByToAccountNumber(accountNumber);
         return Stream.concat(listByFromId.stream(), listByToId.stream())
                 .sorted()
                 .map(TransactionMapper::mapToTransactionDto)

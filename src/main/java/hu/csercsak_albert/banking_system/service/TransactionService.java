@@ -13,6 +13,6 @@ public interface TransactionService {
 
     TransactionDto transfer(TransactionDto transactionDto);
 
-    List<TransactionDto> getTransactionsById(Long id);
+    List<TransactionDto> getTransactionsByAccountNumber(Long accountNumber);
 
 }

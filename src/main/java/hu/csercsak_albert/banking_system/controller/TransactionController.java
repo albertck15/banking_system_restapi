@@ -2,6 +2,7 @@ package hu.csercsak_albert.banking_system.controller;
 
 import hu.csercsak_albert.banking_system.dto.TransactionDto;
 import hu.csercsak_albert.banking_system.entity.Transaction;
+import hu.csercsak_albert.banking_system.enums.TransactionType;
 import hu.csercsak_albert.banking_system.exceptions.TransactionNotFoundException;
 import hu.csercsak_albert.banking_system.service.TransactionService;
 import org.apache.coyote.Response;
@@ -22,21 +23,36 @@ public class TransactionController {
         this.transactionService = transactionService;
     }
 
-
     @PostMapping("/deposit")
     public ResponseEntity<TransactionDto> deposit(@RequestBody TransactionDto transactionDto) {
         transactionDto.setTime(LocalDateTime.now());
-        HttpStatus status = transactionService.deposit(transactionDto);
-        transactionDto = transactionService
-        return ResponseEntity.status().body();
+        transactionDto.setTransactionType(TransactionType.DEPOSIT);
+        transactionDto = transactionService.deposit(transactionDto);
+        return ResponseEntity.status(HttpStatus.OK).body(transactionDto);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<List<TransactionDto>> listTransactionsById(@PathVariable Long id) {
-        List<TransactionDto> transactions = transactionService.getTransactionsById(id);
+    @PostMapping("/withdraw")
+    public ResponseEntity<TransactionDto> withdraw(@RequestBody TransactionDto transactionDto) {
+        transactionDto.setTime(LocalDateTime.now());
+        transactionDto.setTransactionType(TransactionType.WITHDRAWAL);
+        transactionDto = transactionService.withdraw(transactionDto);
+        return ResponseEntity.status(HttpStatus.OK).body(transactionDto);
+    }
+
+    @PostMapping("/transfer")
+    public ResponseEntity<TransactionDto> transfer(@RequestBody TransactionDto transactionDto) {
+        transactionDto.setTime(LocalDateTime.now());
+        transactionDto.setTransactionType(TransactionType.TRANSFER);
+        transactionDto = transactionService.transfer(transactionDto);
+        return ResponseEntity.status(HttpStatus.OK).body(transactionDto);
+    }
+
+    @GetMapping("/{accountNumber}")
+    public ResponseEntity<List<TransactionDto>> listTransactionsById(@PathVariable Long accountNumber) {
+        List<TransactionDto> transactions = transactionService.getTransactionsByAccountNumber(accountNumber);
         if (transactions.isEmpty()) {
-            throw new TransactionNotFoundException("There are no transactions with sender or receiver ID(%d)".formatted(id));
+            throw new TransactionNotFoundException("There are no transactions with this account number(%d)".formatted(accountNumber));
         }
-        return
+        return ResponseEntity.status(HttpStatus.OK).body(transactions);
     }
 }

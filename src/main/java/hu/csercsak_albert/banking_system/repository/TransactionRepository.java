@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
 
-    List<Transaction> findByFromAccountId(long fromAccountId);
+    List<Transaction> findByFromAccountNumber(long fromAccountNumber);
 
-    List<Transaction> findByToAccountId(long toAccountId);
+    List<Transaction> findByToAccountNumber(long toAccountNumber);
 }

@@ -1,5 +1,6 @@
 package hu.csercsak_albert.banking_system.dto;
 
+import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,6 +18,7 @@ import java.time.LocalDateTime;
 @Builder
 public class UserDto {
 
+    @Id
     private Long id;
 
     private Integer accountNumber;
