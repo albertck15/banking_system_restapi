@@ -4,6 +4,8 @@ import hu.csercsak_albert.banking_system.dto.UserDto;
 import hu.csercsak_albert.banking_system.entity.Balance;
 import hu.csercsak_albert.banking_system.entity.User;
 
+import java.time.LocalDate;
+
 public class UserMapper {
 
     public static User mapToUser(UserDto userDto) {
@@ -15,7 +17,7 @@ public class UserMapper {
                 .email(userDto.getEmail())
                 .firstName(userDto.getFirstName())
                 .lastName(userDto.getLastName())
-                .dateOfBirth(userDto.getDateOfBirth())
+                .dateOfBirth(LocalDate.parse(userDto.getDateOfBirth()))
                 .createdAt(userDto.getCreatedAt())
                 .updatedAt(userDto.getUpdatedAt())
                 .lastLogin(userDto.getLastLogin())
@@ -38,7 +40,7 @@ public class UserMapper {
                 .email(user.getEmail())
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
-                .dateOfBirth(user.getDateOfBirth())
+                .dateOfBirth(user.getDateOfBirth().toString())
                 .createdAt(user.getCreatedAt())
                 .updatedAt(user.getUpdatedAt())
                 .lastLogin(user.getLastLogin())

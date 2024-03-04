@@ -79,7 +79,7 @@ public class TransactionServiceImpl implements TransactionService {
     public TransactionDto transfer(TransactionDto transactionDto) {
         User from = userRepository.findByAccountNumber(transactionDto.getFromAccountNumber())
                 .orElseThrow(() -> new UserNotFoundException("User not found with that account number(%d)".formatted(transactionDto.getFromAccountNumber())));
-        User to = userRepository.findByAccountNumber(transactionDto.getFromAccountNumber())
+        User to = userRepository.findByAccountNumber(transactionDto.getToAccountNumber())
                 .orElseThrow(() -> new UserNotFoundException("User not found with that account number(%d)".formatted(transactionDto.getFromAccountNumber())));
         Balance fromBalance = from.getBalance();
         Balance toBalance = to.getBalance();

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.LocalDateTime;
+import java.util.stream.Collectors;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -46,7 +47,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<CustomErrorResponse> handleValidationExceptions(MethodArgumentNotValidException e) {
         String errorMessage = e.getBindingResult().getFieldErrors().stream()
                 .map(error -> error.getField() + ": " + error.getDefaultMessage())
-                .reduce("", (accumulator, item) -> accumulator + "\n" + item);
+                .collect(Collectors.joining("\n"));
         CustomErrorResponse errorResponse = CustomErrorResponse.builder()
                 .message(errorMessage)
                 .timestamp(LocalDateTime.now())

@@ -10,7 +10,7 @@ public class TransactionMapper {
                 .id(transactionDto.getId())
                 .transactionType(transactionDto.getTransactionType())
                 .fromAccountNumber(transactionDto.getFromAccountNumber())
-                .toAccountNumber(transactionDto.getFromAccountNumber())
+                .toAccountNumber(transactionDto.getToAccountNumber())
                 .amount(transactionDto.getAmount())
                 .time(transactionDto.getTime())
                 .build();

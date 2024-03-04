@@ -1,14 +1,15 @@
 package hu.csercsak_albert.banking_system.dto;
 
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -33,7 +34,7 @@ public class UserDto {
 
     @NotBlank(message = "Email is required")
     @NotNull(message = "Email is required")
-    @Email(message = "Invalid Email")
+    @Email(message = "Invalid email")
     private String email;
 
     @NotBlank(message = "First name is required")
@@ -44,9 +45,10 @@ public class UserDto {
     @NotNull(message = "Last name is required")
     private String lastName;
 
-    @NotBlank(message = "Date of birth is required")
+    @Pattern(regexp = "\\d{4}(.| |,)\\d{1,2}(.| |,)\\d{1,2}", message = "Invalid date of birth")
     @NotNull(message = "Date of birth is required")
-    private LocalDate dateOfBirth;
+    @NotBlank(message = "Date of birth is required")
+    private String dateOfBirth;
 
     private LocalDateTime createdAt;
 
