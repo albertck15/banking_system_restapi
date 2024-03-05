@@ -9,7 +9,8 @@ import java.time.LocalDateTime;
 @Builder
 @Getter
 public class CustomErrorResponse {
-    private final String message;
-    private final LocalDateTime timestamp;
 
+    private final String message;
+
+    private final LocalDateTime timestamp;
 }
