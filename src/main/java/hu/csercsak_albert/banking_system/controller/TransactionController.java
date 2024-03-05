@@ -1,11 +1,9 @@
 package hu.csercsak_albert.banking_system.controller;
 
 import hu.csercsak_albert.banking_system.dto.TransactionDto;
-import hu.csercsak_albert.banking_system.entity.Transaction;
 import hu.csercsak_albert.banking_system.enums.TransactionType;
 import hu.csercsak_albert.banking_system.exceptions.TransactionNotFoundException;
 import hu.csercsak_albert.banking_system.service.TransactionService;
-import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

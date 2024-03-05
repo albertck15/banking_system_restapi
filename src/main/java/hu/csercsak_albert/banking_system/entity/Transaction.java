@@ -19,7 +19,7 @@ public class Transaction implements Comparable<Transaction> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private long id;
 
     private TransactionType transactionType; // DEPOSIT, WITHDRAWAL, TRANSFER
 

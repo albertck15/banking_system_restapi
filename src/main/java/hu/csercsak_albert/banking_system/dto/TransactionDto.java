@@ -19,12 +19,10 @@ import java.time.LocalDateTime;
 public class TransactionDto {
 
     @Id
-    private Long id;
+    private long id;
 
     private TransactionType transactionType;
 
-    @NotNull
-    @NotBlank()
     private int fromAccountNumber;
 
     private int toAccountNumber;

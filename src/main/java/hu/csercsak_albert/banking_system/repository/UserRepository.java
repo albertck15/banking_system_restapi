@@ -11,6 +11,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     // Mainly used for the account number generation to avoid duplicates
     boolean existsByAccountNumber(int accountNumber);
 
+    boolean existsByUsername(String username);
+
     Optional<User> findByAccountNumber(int accountNumber);
 
 }
