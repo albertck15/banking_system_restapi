@@ -1,7 +1,6 @@
 package hu.csercsak_albert.banking_system.service;
 
 import hu.csercsak_albert.banking_system.dto.TransactionDto;
-import org.springframework.http.HttpStatus;
 
 import java.util.List;
 

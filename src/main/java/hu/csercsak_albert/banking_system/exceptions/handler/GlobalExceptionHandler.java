@@ -1,8 +1,10 @@
 package hu.csercsak_albert.banking_system.exceptions.handler;
 
 import hu.csercsak_albert.banking_system.dto.CustomErrorResponse;
-import hu.csercsak_albert.banking_system.exceptions.*;
-import org.apache.coyote.Response;
+import hu.csercsak_albert.banking_system.exceptions.BalanceNotFoundException;
+import hu.csercsak_albert.banking_system.exceptions.InvalidAmountException;
+import hu.csercsak_albert.banking_system.exceptions.TransactionNotFoundException;
+import hu.csercsak_albert.banking_system.exceptions.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;

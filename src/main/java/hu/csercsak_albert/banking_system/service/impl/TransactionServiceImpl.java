@@ -1,7 +1,6 @@
 package hu.csercsak_albert.banking_system.service.impl;
 
 import hu.csercsak_albert.banking_system.dto.TransactionDto;
-import hu.csercsak_albert.banking_system.dto.UserDto;
 import hu.csercsak_albert.banking_system.entity.Balance;
 import hu.csercsak_albert.banking_system.entity.Transaction;
 import hu.csercsak_albert.banking_system.entity.User;
@@ -13,12 +12,10 @@ import hu.csercsak_albert.banking_system.repository.BalanceRepository;
 import hu.csercsak_albert.banking_system.repository.TransactionRepository;
 import hu.csercsak_albert.banking_system.repository.UserRepository;
 import hu.csercsak_albert.banking_system.service.TransactionService;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Stream;
 
 @Service

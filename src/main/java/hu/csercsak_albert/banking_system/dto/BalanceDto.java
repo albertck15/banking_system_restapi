@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class BalanceDto {
 
-    private Long id;
+    private long id;
 
     private Double balance;
 }
