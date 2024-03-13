@@ -1,7 +1,7 @@
 package hu.csercsak_albert.banking_system.exceptions.handler;
 
 import hu.csercsak_albert.banking_system.dto.CustomErrorResponse;
-import hu.csercsak_albert.banking_system.exceptions.BalanceNotFoundException;
+import hu.csercsak_albert.banking_system.exceptions.AccountNotFoundException;
 import hu.csercsak_albert.banking_system.exceptions.InvalidAmountException;
 import hu.csercsak_albert.banking_system.exceptions.TransactionNotFoundException;
 import hu.csercsak_albert.banking_system.exceptions.UserNotFoundException;
@@ -27,6 +27,15 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
 
+    @ExceptionHandler(AccountNotFoundException.class)
+    public ResponseEntity<CustomErrorResponse> handleAccountNotFoundException(AccountNotFoundException e) {
+        CustomErrorResponse errorResponse = CustomErrorResponse.builder()
+                .message(e.getMessage())
+                .timestamp(LocalDateTime.now())
+                .build();
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+    }
+
     @ExceptionHandler(InvalidAmountException.class)
     public ResponseEntity<CustomErrorResponse> handleInvalidAmountException(InvalidAmountException e) {
         CustomErrorResponse errorResponse = CustomErrorResponse.builder()
@@ -34,15 +43,6 @@ public class GlobalExceptionHandler {
                 .timestamp(LocalDateTime.now())
                 .build();
         return ResponseEntity.badRequest().body(errorResponse);
-    }
-
-    @ExceptionHandler(BalanceNotFoundException.class)
-    public ResponseEntity<CustomErrorResponse> handleBalanceNotFoundException(BalanceNotFoundException e) {
-        CustomErrorResponse errorResponse = CustomErrorResponse.builder()
-                .message(e.getMessage())
-                .timestamp(LocalDateTime.now())
-                .build();
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

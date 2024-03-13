@@ -1,137 +1,135 @@
 package hu.csercsak_albert.banking_system.service.impl;
 
-import hu.csercsak_albert.banking_system.dto.BalanceDto;
 import hu.csercsak_albert.banking_system.dto.UserDto;
-import hu.csercsak_albert.banking_system.entity.Balance;
+import hu.csercsak_albert.banking_system.entity.Account;
 import hu.csercsak_albert.banking_system.entity.User;
-import hu.csercsak_albert.banking_system.exceptions.BalanceNotFoundException;
-import hu.csercsak_albert.banking_system.exceptions.InvalidAmountException;
 import hu.csercsak_albert.banking_system.exceptions.UserNotFoundException;
-import hu.csercsak_albert.banking_system.mapper.BalanceMapper;
 import hu.csercsak_albert.banking_system.mapper.UserMapper;
-import hu.csercsak_albert.banking_system.repository.BalanceRepository;
+import hu.csercsak_albert.banking_system.repository.AccountRepository;
 import hu.csercsak_albert.banking_system.repository.UserRepository;
 import hu.csercsak_albert.banking_system.service.UserService;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
-import java.util.Random;
+
+/**
+ * Implementation class for the UserService interface.
+ * Provides functionality for creating, updating, deleting, and retrieving user information.
+ * <p>
+ * This class interacts with the UserRepository and AccountRepository to perform CRUD (Create, Read, Update, Delete)
+ * operations on user and account data. It also uses the UserMapper class to map between DTOs (Data Transfer Objects)
+ * and entity objects.
+ * <p>
+ * Transactional integrity is ensured by using Spring's @Transactional annotation on methods that perform database
+ * operations. Authentication and authorization checks are handled to enforce security constraints, such as ensuring
+ * that a user can only perform actions on their own account.
+ * <p>
+ * In addition to handling user-related operations, this class also provides methods for working with accounts,
+ * including creating, updating, and deleting accounts associated with users.
+ */
 
 @Service
 public class UserServiceImpl implements UserService {
 
-    @Value("${account.number.min.value}")
-    private int accNumberMin;
-
-    @Value("${account.number.max.value}")
-    private int accNumberMax;
-
     private final UserRepository userRepository;
-    private final BalanceRepository balanceRepository;
-//    private final PasswordEncoderService passwordEncoder;
 
-    public UserServiceImpl(UserRepository userRepository, BalanceRepository balanceRepository /* PasswordEncoderService passwordEncoder*/) {
+    private final AccountRepository accountRepository;
+
+    public UserServiceImpl(UserRepository userRepository,
+                           AccountRepository accountRepository,
+                           AccountNumberGeneratorService accountNumberGenerator) {
         this.userRepository = userRepository;
-        this.balanceRepository = balanceRepository;
-        /*this.passwordEncoder = passwordEncoder;*/
+        this.accountRepository = accountRepository;
     }
 
-
+    /**
+     * Creates a new user based on the provided user DTO.
+     *
+     * @param userDto The DTO representing the user to be created.
+     * @return The HTTP status representing the success of the user creation operation (HttpStatus.CREATED).
+     */
     @Transactional
     @Override
-    public UserDto createUser(UserDto userDto, Double initialBalance) {
-        if (initialBalance == null) {
-            initialBalance = 0.0d;
-        }
-        if (initialBalance < 0) {
-            throw new InvalidAmountException("Initial balance must be 0 or positive");
-        }
-        BalanceDto balanceDto = new BalanceDto();
-        balanceDto.setBalance(initialBalance);
-        userDto.setBalanceDto(balanceDto);
+    public HttpStatus createUser(UserDto userDto) {
         User user = UserMapper.mapToUser(userDto);
-        user.setAccountNumber(generateAccountNumber());
-        Balance balance = user.getBalance();
-        balanceRepository.save(balance);
-        //  user.setPassword(passwordEncoder.encode(userDto.getPassword()));
         user = userRepository.save(user);
-        return UserMapper.mapToUserDto(user);
+        return HttpStatus.CREATED;
     }
 
+    /**
+     * Updates an existing user with the specified ID using the details provided in the user DTO.
+     *
+     * @param id      The ID of the user to be updated.
+     * @param userDto The DTO containing the updated user details.
+     * @return The HTTP status representing the success of the user update operation (HttpStatus.ACCEPTED).
+     * @throws UserNotFoundException if no user is found with the specified ID.
+     */
     @Transactional
     @Override
-    public UserDto updateUser(Long id, UserDto userDto) {
+    public HttpStatus updateUser(Long id, UserDto userDto) {
+
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("User not found with this ID(%d)".formatted(id)));
-        user.setFirstName(userDto.getFirstName());
-        user.setLastName(userDto.getLastName());
-        user.setEmail(userDto.getEmail());
-        user.setPassword(userDto.getPassword());
-        user.setUsername(userDto.getUsername());
-        user.setUpdatedAt(LocalDateTime.now());
-        user = userRepository.save(user);
-        return UserMapper.mapToUserDto(user);
+
+        if (isUserOwner(user)) {
+            user.setFirstName(userDto.getFirstName());
+            user.setLastName(userDto.getLastName());
+            user.setEmail(userDto.getEmail());
+            user.setPassword(userDto.getPassword());
+            user.setUsername(userDto.getUsername());
+            user.setUpdatedAt(LocalDateTime.now());
+            user = userRepository.save(user);
+        }
+        return HttpStatus.ACCEPTED;
     }
 
+    /**
+     * Deletes the user with the specified ID.
+     *
+     * @param id The ID of the user to be deleted.
+     * @return The HTTP status representing the success of the user deletion operation (HttpStatus.NO_CONTENT).
+     * @throws UserNotFoundException if no user is found with the specified ID.
+     */
     @Transactional
     @Override
     public HttpStatus deleteUser(Long id) {
-        Optional<User> userOptional = userRepository.findById(id);
-        Optional<Balance> balanceOptional = balanceRepository.findByUserId(id);
-        if (userOptional.isPresent() && balanceOptional.isPresent()) {
-            userRepository.delete(userOptional.get());
-            balanceRepository.delete(balanceOptional.get());
-            return HttpStatus.OK;
+
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("User not found with that ID(%d)".formatted(id)));
+
+        if (isUserOwner(user)) {
+            Optional<List<Account>> accounts = accountRepository.findByUserId(user.getId());
+            accounts.ifPresent(accountRepository::deleteAll);
+            userRepository.delete(user);
+            return HttpStatus.NO_CONTENT;
         }
-        throw new UserNotFoundException("User not found with that ID(%d)".formatted(id));
+        return HttpStatus.FORBIDDEN;
     }
 
-    @Override
-    public UserDto findByAccountNumber(int accountNumber) {
-        Optional<User> userOptional = userRepository.findByAccountNumber(accountNumber);
-        UserDto userDto = userOptional.map(UserMapper::mapToUserDto) //
-                .orElseThrow(() -> new UserNotFoundException("User not found with account number(%d)".formatted(accountNumber)));
-        Optional<Balance> balanceOptional = balanceRepository.findByUserId(userDto.getId());
-        if (balanceOptional.isPresent()) {
-            Balance balance = balanceOptional.get();
-            userDto.setBalanceDto(BalanceMapper.mapToBalanceDto(balance));
-            return userDto;
-        }
-        throw new UserNotFoundException("Balance not found for this account with the number(%d)".formatted(accountNumber));
-    }
-
+    /**
+     * Retrieves the user DTO corresponding to the specified user ID.
+     *
+     * @param id The ID of the user to be retrieved.
+     * @return The DTO representing the user with the specified ID.
+     * @throws UserNotFoundException if no user is found with the specified ID.
+     */
     @Override
     public UserDto findById(Long id) {
         Optional<User> userOptional = userRepository.findById(id);
-        UserDto userDto = userOptional.map(UserMapper::mapToUserDto)
+        return userOptional.map(UserMapper::mapToUserDto)
                 .orElseThrow(() -> new UserNotFoundException("User not found with the ID(%d)".formatted(id)));
-        Optional<Balance> balance = balanceRepository.findByUserId(id);
-        BalanceDto balanceDto = balance.map(BalanceMapper::mapToBalanceDto)
-                .orElseThrow(() -> new BalanceNotFoundException("Balance not found with this user ID(%d)".formatted(id)));
-        userDto.setBalanceDto(balanceDto);
-        return userDto;
     }
 
-    @Override
-    public boolean isExistByAccountNumber(int accountNumber) {
-        Optional<User> userOptional = userRepository.findByAccountNumber(accountNumber);
-        return userOptional.isPresent();
+    // Helper method
+    private boolean isUserOwner(User user) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        return user.getUsername().equals(username);
     }
-
-    //************************************
-    // Helper methods
-    //
-    private Integer generateAccountNumber() {
-        Random random = new Random();
-        int accNumber = -1;
-        do {
-            accNumber = random.nextInt(accNumberMax - accNumberMin + 1) + accNumberMin;
-        } while (userRepository.existsByAccountNumber(accNumber));
-        return accNumber;
-    }
-
 }

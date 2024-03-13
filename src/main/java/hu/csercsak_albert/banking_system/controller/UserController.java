@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/api/users")
@@ -25,24 +24,15 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(userDto);
     }
 
-    @PostMapping
-    public ResponseEntity<UserDto> addUser(@Valid @RequestBody UserDto userDto,
-                                           @RequestParam(value = "initialAmount", required = false) Double initialAmount
-    ) {
-        userDto.setCreatedAt(LocalDateTime.now());
-        userDto.setUpdatedAt(LocalDateTime.now());
-        userDto.setLastLogin(LocalDateTime.now());
-        return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(userDto, initialAmount));
-    }
-
     @PutMapping("/{id}")
     public ResponseEntity<UserDto> updateUser(@Valid @RequestBody UserDto userDto, @PathVariable Long id) {
-        UserDto updatedUserDto = userService.updateUser(id, userDto);
-        return ResponseEntity.status(HttpStatus.OK).body(updatedUserDto);
+        HttpStatus status = userService.updateUser(id, userDto);
+        userDto = userService.findById(id);
+        return ResponseEntity.status(status).body(userDto);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteAccountById(@PathVariable Long id) {
+    public ResponseEntity<String> deleteUserById(@PathVariable Long id) {
         HttpStatus responseStatus = userService.deleteUser(id);
         return ResponseEntity.status(responseStatus).body("User successfully deleted.");
     }

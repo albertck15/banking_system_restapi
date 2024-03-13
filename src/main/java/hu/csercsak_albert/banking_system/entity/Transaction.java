@@ -21,11 +21,12 @@ public class Transaction implements Comparable<Transaction> {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    @Enumerated(EnumType.STRING)
     private TransactionType transactionType; // DEPOSIT, WITHDRAWAL, TRANSFER
 
-    private int fromAccountNumber;
+    private long fromAccountNumber;
 
-    private int toAccountNumber;
+    private long toAccountNumber;
 
     private double amount;
 

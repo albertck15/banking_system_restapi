@@ -3,30 +3,24 @@ package hu.csercsak_albert.banking_system.dto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.Data;
 
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
-@Getter
+@Data
 public class RegistrationRequest {
 
-    @NotBlank
+    @NotBlank(message = "Missing username")
     private String username;
 
-    @NotBlank
+    @NotBlank(message = "Missing first name")
     private String firstName;
 
-    @NotBlank
+    @NotBlank(message = "Missing last name")
     private String lastName;
 
-    @NotBlank
+    @NotBlank(message = "Missing password")
     private String password;
 
-    @Email
+    @Email(message = "Invalid email")
     private String email;
 
     @Pattern(regexp = "\\d{4}(.| |,)\\d{1,2}(.| |,)\\d{1,2}", message = "Invalid date of birth")

@@ -21,9 +21,9 @@ public class TransactionDto {
 
     private TransactionType transactionType;
 
-    private int fromAccountNumber;
+    private long fromAccountNumber;
 
-    private int toAccountNumber;
+    private long toAccountNumber;
 
     @Min(1)
     private double amount;
