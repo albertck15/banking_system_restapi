@@ -8,11 +8,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
+import java.util.logging.Logger;
 
 @RestController
+@RequestMapping("/api")
 public class RegistrationController {
     @Autowired
     private UserService userService;
@@ -22,7 +25,7 @@ public class RegistrationController {
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody RegistrationRequest request) {
-        LocalDate dob = LocalDate.parse(request.getDob().replaceAll(".|,| ", "-"));
+        LocalDate dob = LocalDate.parse(request.getDob().replaceAll("[. ]", "-"));
         UserDto userDto = UserDto.builder()
                 .username(request.getUsername())
                 .password(passwordEncoder.encode(request.getPassword()))

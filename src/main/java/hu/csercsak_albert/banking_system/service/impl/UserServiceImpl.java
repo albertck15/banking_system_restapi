@@ -3,6 +3,7 @@ package hu.csercsak_albert.banking_system.service.impl;
 import hu.csercsak_albert.banking_system.dto.UserDto;
 import hu.csercsak_albert.banking_system.entity.Account;
 import hu.csercsak_albert.banking_system.entity.User;
+import hu.csercsak_albert.banking_system.enums.Role;
 import hu.csercsak_albert.banking_system.exceptions.UserNotFoundException;
 import hu.csercsak_albert.banking_system.mapper.UserMapper;
 import hu.csercsak_albert.banking_system.repository.AccountRepository;
@@ -58,6 +59,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public HttpStatus createUser(UserDto userDto) {
         User user = UserMapper.mapToUser(userDto);
+        user.setCreatedAt(LocalDateTime.now());
+        user.setUpdatedAt(LocalDateTime.now());
+        user.setRole(Role.USER);
         user = userRepository.save(user);
         return HttpStatus.CREATED;
     }
@@ -124,6 +128,20 @@ public class UserServiceImpl implements UserService {
         Optional<User> userOptional = userRepository.findById(id);
         return userOptional.map(UserMapper::mapToUserDto)
                 .orElseThrow(() -> new UserNotFoundException("User not found with the ID(%d)".formatted(id)));
+    }
+
+    /**
+     * Retrieves the user DTO corresponding to the specified usesname.
+     *
+     * @param username The username of the user to be retrieved.
+     * @return The DTO representing the user with the specified username.
+     * @throws UserNotFoundException if no user is found with the specified username.
+     */
+    @Override
+    public UserDto findByUsername(String username) {
+        Optional<User> userOptional = userRepository.findByUsername(username);
+        return userOptional.map(UserMapper::mapToUserDto)
+                .orElseThrow(() -> new UserNotFoundException("User not found with the username(%s)".formatted(username)));
     }
 
     // Helper method

@@ -1,8 +1,10 @@
 package hu.csercsak_albert.banking_system.service.impl;
 
+import hu.csercsak_albert.banking_system.dto.UserDto;
 import hu.csercsak_albert.banking_system.entity.Account;
 import hu.csercsak_albert.banking_system.entity.User;
 import hu.csercsak_albert.banking_system.exceptions.AccountNotFoundException;
+import hu.csercsak_albert.banking_system.mapper.UserMapper;
 import hu.csercsak_albert.banking_system.repository.AccountRepository;
 import hu.csercsak_albert.banking_system.service.AccountService;
 import org.springframework.http.HttpStatus;
@@ -46,9 +48,10 @@ public class AccountServiceImpl implements AccountService {
      * @return HttpStatus.CREATED if the account is successfully created.
      */
     @Override
-    public HttpStatus createNewAccount(User ownerUser) {
+    public HttpStatus createNewAccount(UserDto ownerUser) {
+        User owner = UserMapper.mapToUser(ownerUser);
         Account account = Account.builder()
-                .userId(ownerUser.getId())
+                .user(owner)
                 .balance(0.0d)
                 .accountNumber(accountNumberGenerator.generateAccountNumber())
                 .build();
@@ -65,7 +68,7 @@ public class AccountServiceImpl implements AccountService {
      * @throws AccountNotFoundException if no account is found with the specified account number.
      */
     @Override
-    public HttpStatus deleteAccount(User user, Long accountNumber) {
+    public HttpStatus deleteAccount(UserDto user, Long accountNumber) {
         Account account = accountRepository.findByAccountNumber(accountNumber)
                 .orElseThrow(() -> new AccountNotFoundException("Account not found with that account number(%d)".formatted(accountNumber)));
         if (isUserOwner(account, user)) {
@@ -76,9 +79,9 @@ public class AccountServiceImpl implements AccountService {
     }
 
     // Helper method
-    private boolean isUserOwner(Account account, User user) {
+    private boolean isUserOwner(Account account, UserDto user) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
-        return account.getUserId() == user.getId() && user.getUsername().equals(username);
+        return account.getUser().getId() == user.getId() && user.getUsername().equals(username);
     }
 }

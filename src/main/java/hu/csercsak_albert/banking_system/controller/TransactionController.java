@@ -4,6 +4,7 @@ import hu.csercsak_albert.banking_system.dto.TransactionDto;
 import hu.csercsak_albert.banking_system.enums.TransactionType;
 import hu.csercsak_albert.banking_system.exceptions.TransactionNotFoundException;
 import hu.csercsak_albert.banking_system.service.TransactionService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +16,7 @@ import java.util.List;
 @RequestMapping("/api/transactions")
 public class TransactionController {
 
+    @Autowired
     private final TransactionService transactionService;
 
     public TransactionController(TransactionService transactionService) {

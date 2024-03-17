@@ -14,4 +14,6 @@ public interface UserService {
     HttpStatus deleteUser(Long id);
 
     UserDto findById(Long id);
+
+    UserDto findByUsername(String username);
 }

@@ -1,6 +1,9 @@
-package hu.csercsak_albert.banking_system.entity;
+package hu.csercsak_albert.banking_system.dto;
 
-import jakarta.persistence.*;
+import hu.csercsak_albert.banking_system.entity.User;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,17 +12,15 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
 @Builder
-@Table(name = "accounts")
-public class Account {
+public class AccountDto {
 
     @Id
     private Long accountNumber;
 
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
-    private User user;
+    private UserDto user;
 
     private Double balance;
 }

@@ -8,7 +8,6 @@ import hu.csercsak_albert.banking_system.exceptions.InvalidAmountException;
 import hu.csercsak_albert.banking_system.mapper.TransactionMapper;
 import hu.csercsak_albert.banking_system.repository.AccountRepository;
 import hu.csercsak_albert.banking_system.repository.TransactionRepository;
-import hu.csercsak_albert.banking_system.repository.UserRepository;
 import hu.csercsak_albert.banking_system.service.TransactionService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,7 +45,6 @@ public class TransactionServiceImpl implements TransactionService {
     //*************************************************
     //  Transaction management
     //
-
 
     /**
      * Making a deposit

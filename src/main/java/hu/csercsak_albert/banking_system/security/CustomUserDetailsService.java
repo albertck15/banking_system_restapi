@@ -1,11 +1,14 @@
-package hu.csercsak_albert.banking_system.service.impl;
+package hu.csercsak_albert.banking_system.security;
 
 import hu.csercsak_albert.banking_system.entity.User;
+import hu.csercsak_albert.banking_system.enums.Role;
 import hu.csercsak_albert.banking_system.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
 /**
  * Service class implementing Spring Security's UserDetailsService interface
@@ -16,13 +19,27 @@ import org.springframework.security.crypto.password.PasswordEncoder;
  * PasswordEncoder. It implements the loadUserByUsername method to load user
  * details for authentication purposes.
  */
+
+@Service
 public class CustomUserDetailsService implements UserDetailsService {
 
+    @Autowired
     private UserRepository userRepository;
-    private PasswordEncoder passwordEncoder;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+
+        // HARDCODED ADMIN USER, JUST FOR TESTING!!
+        //*******************************************
+        if (username.equals("admin")) {
+            return org.springframework.security.core.userdetails.User.builder()
+                    .username("admin")
+                    .password("admin") // admin
+                    .authorities(new SimpleGrantedAuthority(Role.ADMIN.name()))
+                    .build();
+        }
+        //********************************************
+
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
 
@@ -31,11 +48,5 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .password(user.getPassword())
                 .authorities(user.getAuthorities())
                 .build();
-    }
-
-    public boolean authenticate(String username, String password) {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
-        return passwordEncoder.matches(password, user.getPassword());
     }
 }
