@@ -1,5 +1,6 @@
 ## Banking System REST Api
 
+
 ## RegistrationController
 
 Endpoint: `/api/register`
@@ -29,6 +30,8 @@ Description: Retrieves user data. If not an ADMIN role, only data for the logged
 
 Return: ResponseEntity with a UserDto object.
 
+---
+
 Endpoint: `/api/users/{id}`
 
 Method: **PUT**
@@ -36,6 +39,8 @@ Method: **PUT**
 Description: Expects JSON similar to the registration request and updates the registered user in the database if authorized (logged in) or has an ADMIN role.
 
 Return: ResponseEntity with the updated UserDto object.
+
+---
 
 Endpoint: `/api/users/{id}`
 
@@ -56,6 +61,8 @@ Description: Creates a new account for the user after logging in. A user can hav
 
 Return: HttpStatus.
 
+---
+
 Endpoint: `/api/accounts/delete/{account-number}`
 
 Method: **DELETE**
@@ -63,6 +70,8 @@ Method: **DELETE**
 Description: Deletes the specified account if it belongs to the logged-in user or has an ADMIN role.
 
 Return: HttpStatus.
+
+---
 
 Endpoint: `/api/accounts/get-my-accounts`
 
@@ -72,6 +81,8 @@ Description: Returns AccountDtos associated with the logged-in user.
 
 Return: List of AccountDto.
 
+---
+
 Endpoint: `/api/accounts/{account-number}`
 
 Method: **GET**
@@ -79,6 +90,8 @@ Method: **GET**
 Description: Returns an AccountDto object based on the account number. If it does not belong to the logged-in user, the balance will not be visible (null). ADMIN role allows full access.
 
 Return: AccountDto.
+
+---
 
 Endpoint: `/api/accounts/get-all`
 
@@ -99,6 +112,8 @@ Description: Deposits an amount into an account. It does not require the user to
 
 Return: ResponseEntity<TransactionDto> representing the transaction object.
 
+---
+
 Endpoint: `/api/transactions/withdraw`
 
 Method: **POST**
@@ -107,6 +122,8 @@ Description: Withdraws an amount from an account. Requires the user to be logged
 
 Return: ResponseEntity<TransactionDto> representing the transaction object.
 
+---
+
 Endpoint: `/api/transactions/transfer`
 
 Method: **POST**
@@ -114,6 +131,8 @@ Method: **POST**
 Description: Initiates a transaction from one account to another. The sender account must be owned by the logged-in user. Expected inputs include sender account number, receiver account number, and amount.
 
 Return: ResponseEntity<TransactionDto> representing the transaction object.
+
+---
 
 Endpoint: `/api/transactions/{account-number}`
 
@@ -139,3 +158,4 @@ Global return values may vary in case of exceptions. In such cases, the return v
 
 - message
 - timestamp
+
