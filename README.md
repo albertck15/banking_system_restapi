@@ -1,4 +1,4 @@
-### Banking System REST Api
+## Banking System REST Api
 
 ## RegistrationController
 
