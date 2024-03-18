@@ -12,8 +12,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
-import java.util.logging.Logger;
 
+/**
+ * Controller class for handling user registration operations.
+ */
 @RestController
 @RequestMapping("/api")
 public class RegistrationController {
@@ -23,6 +25,12 @@ public class RegistrationController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    /**
+     * Register a new user.
+     *
+     * @param request The registration request containing user details.
+     * @return ResponseEntity with a message indicating successful registration.
+     */
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody RegistrationRequest request) {
         LocalDate dob = LocalDate.parse(request.getDob().replaceAll("[. ]", "-"));

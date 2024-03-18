@@ -3,15 +3,22 @@ package hu.csercsak_albert.banking_system.service.impl;
 import hu.csercsak_albert.banking_system.dto.TransactionDto;
 import hu.csercsak_albert.banking_system.entity.Account;
 import hu.csercsak_albert.banking_system.entity.Transaction;
+import hu.csercsak_albert.banking_system.entity.User;
 import hu.csercsak_albert.banking_system.exceptions.AccountNotFoundException;
 import hu.csercsak_albert.banking_system.exceptions.InvalidAmountException;
+import hu.csercsak_albert.banking_system.exceptions.UserNotFoundException;
 import hu.csercsak_albert.banking_system.mapper.TransactionMapper;
 import hu.csercsak_albert.banking_system.repository.AccountRepository;
 import hu.csercsak_albert.banking_system.repository.TransactionRepository;
+import hu.csercsak_albert.banking_system.repository.UserRepository;
 import hu.csercsak_albert.banking_system.service.TransactionService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -33,14 +40,15 @@ import java.util.stream.Stream;
  */
 @Service
 public class TransactionServiceImpl implements TransactionService {
-    private final TransactionRepository transactionRepository;
 
-    private final AccountRepository accountRepository;
+    @Autowired
+    private TransactionRepository transactionRepository;
 
-    public TransactionServiceImpl(TransactionRepository transactionRepository, AccountRepository accountRepository) {
-        this.transactionRepository = transactionRepository;
-        this.accountRepository = accountRepository;
-    }
+    @Autowired
+    private AccountRepository accountRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     //*************************************************
     //  Transaction management
@@ -63,9 +71,9 @@ public class TransactionServiceImpl implements TransactionService {
         }
 
         // Getting account from repo
-        Account account = accountRepository.findByAccountNumber(transactionDto.getFromAccountNumber())
+        Account account = accountRepository.findByAccountNumber(transactionDto.getToAccountNumber())
                 .orElseThrow(() -> new AccountNotFoundException("Account not found with that account number(%d)"
-                        .formatted(transactionDto.getFromAccountNumber())));
+                        .formatted(transactionDto.getToAccountNumber())));
 
         // Making the "deposit"
         double balance = account.getBalance();
@@ -169,9 +177,25 @@ public class TransactionServiceImpl implements TransactionService {
      * @return list of transactions that made or received by this account number
      */
     @Override
-    public List<TransactionDto> getTransactionsByAccountNumber(Long accountNumber) {
-        List<Transaction> listByFromId = transactionRepository.findByFromAccountNumber(accountNumber); //
-        List<Transaction> listByToId = transactionRepository.findByToAccountNumber(accountNumber);
+    public List<TransactionDto> getTransactions() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException("User not found with the username(%s)".formatted(username)));
+
+        List<Account> accounts = accountRepository.findByUserId(user.getId())
+                .orElseThrow(() -> new AccountNotFoundException("There is no account for the user with the id(%d)".formatted(user.getId())));
+
+        List<Transaction> listByFromId = new ArrayList<>();
+        List<Transaction> listByToId = new ArrayList<>();
+
+        accounts.forEach(account -> {
+            Long accountNumber = account.getAccountNumber();
+            listByFromId.addAll(transactionRepository.findByFromAccountNumber(accountNumber));
+            listByToId.addAll(transactionRepository.findByToAccountNumber(accountNumber));
+        });
+
         return Stream.concat(listByFromId.stream(), listByToId.stream())
                 .sorted()
                 .map(TransactionMapper::mapToTransactionDto)

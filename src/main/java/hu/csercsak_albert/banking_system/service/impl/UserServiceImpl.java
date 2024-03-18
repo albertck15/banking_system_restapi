@@ -9,9 +9,11 @@ import hu.csercsak_albert.banking_system.mapper.UserMapper;
 import hu.csercsak_albert.banking_system.repository.AccountRepository;
 import hu.csercsak_albert.banking_system.repository.UserRepository;
 import hu.csercsak_albert.banking_system.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,16 +40,14 @@ import java.util.Optional;
 @Service
 public class UserServiceImpl implements UserService {
 
-    private final UserRepository userRepository;
+    @Autowired
+    private UserRepository userRepository;
 
-    private final AccountRepository accountRepository;
+    @Autowired
+    private AccountRepository accountRepository;
 
-    public UserServiceImpl(UserRepository userRepository,
-                           AccountRepository accountRepository,
-                           AccountNumberGeneratorService accountNumberGenerator) {
-        this.userRepository = userRepository;
-        this.accountRepository = accountRepository;
-    }
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     /**
      * Creates a new user based on the provided user DTO.
@@ -77,16 +77,30 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public HttpStatus updateUser(Long id, UserDto userDto) {
-
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("User not found with this ID(%d)".formatted(id)));
 
         if (isUserOwner(user)) {
-            user.setFirstName(userDto.getFirstName());
-            user.setLastName(userDto.getLastName());
-            user.setEmail(userDto.getEmail());
-            user.setPassword(userDto.getPassword());
-            user.setUsername(userDto.getUsername());
+            String firstName = userDto.getFirstName();
+            String lastName = userDto.getLastName();
+            String email = userDto.getEmail();
+            String username = userDto.getUsername();
+            if (firstName != null) {
+                user.setFirstName(firstName);
+            }
+            if (lastName != null) {
+                user.setLastName(lastName);
+            }
+            if (email != null) {
+                user.setEmail(email);
+            }
+            if (userDto.getPassword() != null) {
+                user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+            }
+            if (username != null) {
+                user.setUsername(username);
+            }
+
             user.setUpdatedAt(LocalDateTime.now());
             user = userRepository.save(user);
         }

@@ -1,6 +1,5 @@
 package hu.csercsak_albert.banking_system.dto;
 
-import hu.csercsak_albert.banking_system.entity.User;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;

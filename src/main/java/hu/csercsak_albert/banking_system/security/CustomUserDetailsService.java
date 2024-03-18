@@ -1,10 +1,8 @@
 package hu.csercsak_albert.banking_system.security;
 
 import hu.csercsak_albert.banking_system.entity.User;
-import hu.csercsak_albert.banking_system.enums.Role;
 import hu.csercsak_albert.banking_system.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -28,18 +26,6 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-
-        // HARDCODED ADMIN USER, JUST FOR TESTING!!
-        //*******************************************
-        if (username.equals("admin")) {
-            return org.springframework.security.core.userdetails.User.builder()
-                    .username("admin")
-                    .password("admin") // admin
-                    .authorities(new SimpleGrantedAuthority(Role.ADMIN.name()))
-                    .build();
-        }
-        //********************************************
-
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
 

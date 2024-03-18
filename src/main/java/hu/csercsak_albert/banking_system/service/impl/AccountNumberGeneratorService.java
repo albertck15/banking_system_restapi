@@ -1,6 +1,7 @@
 package hu.csercsak_albert.banking_system.service.impl;
 
 import hu.csercsak_albert.banking_system.repository.AccountRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +23,7 @@ import java.util.Random;
 @Service
 public class AccountNumberGeneratorService {
 
+    @Autowired
     private AccountRepository accountRepository;
 
     @Value("${account.number.min.value}")

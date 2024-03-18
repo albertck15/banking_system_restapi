@@ -12,6 +12,6 @@ public interface TransactionService {
 
     TransactionDto transfer(TransactionDto transactionDto);
 
-    List<TransactionDto> getTransactionsByAccountNumber(Long accountNumber);
+    List<TransactionDto> getTransactions();
 
 }
