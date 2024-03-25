@@ -1,10 +1,14 @@
 package hu.csercsak_albert.banking_system.service.impl;
 
 import hu.csercsak_albert.banking_system.entity.Account;
+import hu.csercsak_albert.banking_system.entity.User;
 import hu.csercsak_albert.banking_system.exceptions.AccountNotFoundException;
+import hu.csercsak_albert.banking_system.exceptions.UserNotFoundException;
 import hu.csercsak_albert.banking_system.repository.AccountRepository;
+import hu.csercsak_albert.banking_system.repository.UserRepository;
 import hu.csercsak_albert.banking_system.service.AccountOwnerCheckerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -13,6 +17,7 @@ public class AccountOwnerCheckerServiceImpl implements AccountOwnerCheckerServic
     @Autowired
     private AccountRepository accountRepository;
 
+
     @Override
     public boolean check(Long accountNumber, String username) {
         Account account = accountRepository.findByAccountNumber(accountNumber)
@@ -20,4 +25,5 @@ public class AccountOwnerCheckerServiceImpl implements AccountOwnerCheckerServic
 
         return account.getUser().getUsername().equals(username);
     }
+
 }

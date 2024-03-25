@@ -5,6 +5,7 @@ import hu.csercsak_albert.banking_system.enums.TransactionType;
 import hu.csercsak_albert.banking_system.exceptions.TransactionNotFoundException;
 import hu.csercsak_albert.banking_system.service.AccountOwnerCheckerService;
 import hu.csercsak_albert.banking_system.service.TransactionService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/api/transactions")
+@Tag(name = "Transaction Controller")
 public class TransactionController {
 
     @Autowired

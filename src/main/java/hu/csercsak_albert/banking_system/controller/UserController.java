@@ -3,6 +3,7 @@ package hu.csercsak_albert.banking_system.controller;
 import hu.csercsak_albert.banking_system.dto.UserDto;
 import hu.csercsak_albert.banking_system.enums.Role;
 import hu.csercsak_albert.banking_system.service.UserService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,14 +23,11 @@ import javax.validation.Valid;
  */
 @RestController
 @RequestMapping("/api/users")
+@Tag(name = "User Controller")
 public class UserController {
 
     @Autowired
-    private final UserService userService;
-
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
+    private UserService userService;
 
     /**
      * Retrieve a user by ID.

@@ -8,6 +8,7 @@ import hu.csercsak_albert.banking_system.exceptions.UserNotFoundException;
 import hu.csercsak_albert.banking_system.mapper.AccountMapper;
 import hu.csercsak_albert.banking_system.repository.AccountRepository;
 import hu.csercsak_albert.banking_system.repository.UserRepository;
+import hu.csercsak_albert.banking_system.service.AccountOwnerCheckerService;
 import hu.csercsak_albert.banking_system.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -48,6 +49,9 @@ public class AccountServiceImpl implements AccountService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private AccountOwnerCheckerService checkerService;
+
     /**
      * Creates a new account for the specified user.
      * <p>
@@ -84,13 +88,9 @@ public class AccountServiceImpl implements AccountService {
     @Override
     @Transactional
     public HttpStatus deleteAccount(Long accountNumber) {
-        User user = getLoggedInUser();
-
         Account account = accountRepository.findByAccountNumber(accountNumber)
                 .orElseThrow(() -> new AccountNotFoundException("Account not found with that account number(%d)".formatted(accountNumber)));
-
         accountRepository.delete(account);
-
         return HttpStatus.NO_CONTENT;
     }
 
@@ -131,9 +131,7 @@ public class AccountServiceImpl implements AccountService {
     // Helper methods
 
     private boolean isUserOwner(Account account, User user) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        return account.getUser().getId() == user.getId() && user.getUsername().equals(username);
+        return checkerService.check(account.getAccountNumber(), getLoggedInUsername());
     }
 
     private String getLoggedInUsername() {

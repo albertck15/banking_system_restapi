@@ -26,10 +26,10 @@ public class AccountNumberGeneratorService {
     @Autowired
     private AccountRepository accountRepository;
 
-    @Value("${account.number.min.value}")
+    @Value("${account.number.min-value}")
     private int accNumberMin;
 
-    @Value("${account.number.max.value}")
+    @Value("${account.number.max-value}")
     private int accNumberMax;
 
     Long generateAccountNumber() {

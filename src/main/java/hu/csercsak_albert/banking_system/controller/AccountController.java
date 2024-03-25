@@ -2,6 +2,8 @@ package hu.csercsak_albert.banking_system.controller;
 
 import hu.csercsak_albert.banking_system.dto.AccountDto;
 import hu.csercsak_albert.banking_system.service.AccountService;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
@@ -17,6 +19,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/api/accounts")
+@Tag(name = "Account Controller")
 public class AccountController {
 
     @Autowired
@@ -28,6 +31,7 @@ public class AccountController {
      * @return HttpStatus.OK if the account creation is successful.
      */
     @GetMapping("/create")
+    @ApiOperation(value = "Creating a new account")
     public HttpStatus createNewAccount() {
         return accountService.createNewAccount();
     }

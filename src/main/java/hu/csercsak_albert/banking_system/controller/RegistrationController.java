@@ -3,6 +3,7 @@ package hu.csercsak_albert.banking_system.controller;
 import hu.csercsak_albert.banking_system.dto.RegistrationRequest;
 import hu.csercsak_albert.banking_system.dto.UserDto;
 import hu.csercsak_albert.banking_system.service.UserService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,6 +19,7 @@ import java.time.LocalDate;
  */
 @RestController
 @RequestMapping("/api")
+@Tag(name = "Registration Controller")
 public class RegistrationController {
     @Autowired
     private UserService userService;
